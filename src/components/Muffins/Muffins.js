@@ -4,7 +4,7 @@ import {
   selectMuffinsArray,
   selectMuffinsLoadError,
   selectMuffinsLoading,
-} from "../../redux/selectors";
+} from "../../redux/muffins";
 import { likeMuffin, loadMuffins } from "../../redux/actions";
 
 const Muffins = () => {
