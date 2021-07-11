@@ -1,6 +1,10 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { boolean, string } from "yargs";
-import { loadMuffins } from "./actions";
+
+export const loadMuffins = createAsyncThunk("muffins/load", async () => {
+  const response = await fetch("http://localhost:3001/muffins");
+  const muffins = await response.json();
+  return { muffins };
+});
 
 export const selectMuffinsState = (rootState) => rootState.muffins;
 export const selectMuffinsArray = (rootState) =>
@@ -12,8 +16,6 @@ export const selectMuffinsLoadError = (rootState) =>
 
 const initialState = {
   muffins: [],
-  muffinsLoading: boolean,
-  error: string
 };
 
 const muffinsSlice = createSlice({
@@ -25,7 +27,7 @@ const muffinsSlice = createSlice({
         const muffinToLike = state.muffins.find(
           (muffin) => muffin.id === action.payload.id
         );
-        muffinToLike += 1;
+        muffinToLike.likes += 1;
       },
       prepare: (muffinId) => {
         return { payload: { id: muffinId } };
