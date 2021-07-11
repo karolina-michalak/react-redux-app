@@ -1,31 +1,18 @@
-import { createReducer, createAction } from "@reduxjs/toolkit";
+import {
+  createReducer,
+  createAction,
+  createAsyncThunk,
+} from "@reduxjs/toolkit";
 
 export const likeMuffin = createAction("muffins/like", (muffinId) => {
   return { payload: { id: muffinId } };
 });
 
-export const loadMuffins = () => async (dispatch) => {
-  dispatch({
-    type: "muffins/load_request",
-  });
-
-  try {
-    const response = await fetch("http://localhost:3001/muffins");
-    const data = await response.json();
-
-    dispatch({
-      type: "muffins/load_success",
-      payload: {
-        muffins: data,
-      },
-    });
-  } catch (e) {
-    dispatch({
-      type: "muffins/load_failure",
-      error: "Failed to load muffins.",
-    });
-  }
-};
+export const loadMuffins = createAsyncThunk("muffins/load", async () => {
+  const response = await fetch("http://localhost:3001/muffins");
+  const muffins = await response.json();
+  return { muffins };
+});
 
 export const selectMuffinsState = (rootState) => rootState.muffins;
 export const selectMuffinsArray = (rootState) =>
@@ -40,7 +27,7 @@ const initialState = {
 };
 
 const reducer = createReducer(initialState, {
-  "muffins/like": (state, action) => {
+  [likeMuffin]: (state, action) => {
     const muffinToLike = state.muffins.find(
       (muffin) => muffin.id === action.payload.id
     );
