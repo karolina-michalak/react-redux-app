@@ -1,3 +1,5 @@
+import { createReducer } from "@reduxjs/toolkit";
+
 export const likeMuffin = (muffinId) => ({
   type: "muffins/like",
   payload: { id: muffinId },
@@ -27,42 +29,45 @@ export const loadMuffins = () => async (dispatch) => {
 };
 
 export const selectMuffinsState = (rootState) => rootState.muffins;
-export const selectMuffinsArray = (rootState) => selectMuffinsState(rootState).muffins;
-export const selectMuffinsLoading = (rootState) => selectMuffinsState(rootState).muffinsLoading;
-export const selectMuffinsLoadError = (rootState) => selectMuffinsState(rootState).error;
+export const selectMuffinsArray = (rootState) =>
+  selectMuffinsState(rootState).muffins;
+export const selectMuffinsLoading = (rootState) =>
+  selectMuffinsState(rootState).muffinsLoading;
+export const selectMuffinsLoadError = (rootState) =>
+  selectMuffinsState(rootState).error;
 
 const initialState = {
   muffins: [],
 };
 
-const reducer = (state = initialState, action) => {
-  switch (action.type) {
-    case "muffins/like":
-      const { id } = action.payload;
-      return {
-        ...state,
-        muffins: state.muffins.map((muffin) => {
-          if (muffin.id === id) {
-            return { ...muffin, likes: muffin.likes + 1 };
-          }
-          return muffin;
-        }),
-      };
+const reducer = createReducer(initialState, {
+  "muffins/like": (state, action) => {
+    const { id } = action.payload;
 
-    case "muffins/load_request":
-      return { ...state, muffinsLoading: true };
+    return {
+      ...state,
+      muffins: state.muffins.map((muffin) => {
+        if (muffin.id === id) {
+          return { ...muffin, likes: muffin.likes + 1 };
+        }
+        return muffin;
+      }),
+    };
+  },
 
-    case "muffins/load_success":
-      const { muffins } = action.payload;
-      return { ...state, muffinsLoading: false, muffins };
+  "muffins/load_request": (state) => {
+    return { ...state, muffinsLoading: true };
+  },
 
-    case "muffins/load_failure":
-      const { error } = action;
-      return { ...state, muffinsLoading: false, error };
+  "muffins/load_success": (state, action) => {
+    const { muffins } = action.payload;
+    return { ...state, muffinsLoading: false, muffins };
+  },
 
-    default:
-      return state;
-  }
-};
+  "muffins/load_failure": (state, action) => {
+    const { error } = action;
+    return { ...state, muffinsLoading: false, error };
+  },
+});
 
 export default reducer;
