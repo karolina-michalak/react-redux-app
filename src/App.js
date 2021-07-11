@@ -1,7 +1,8 @@
 import "./App.css";
+import Muffins from "./components/Muffins/Muffins";
 
 function App() {
-  return <div> działa </div>;
+  return <div> <Muffins/> </div>;
 }
 
 export default App;
