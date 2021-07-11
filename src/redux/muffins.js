@@ -34,18 +34,18 @@ const reducer = createReducer(initialState, {
     muffinToLike.likes += 1;
   },
 
-  "muffins/load_request": (state) => {
-    return { ...state, muffinsLoading: true };
+  [loadMuffins.pending]: (state) => {
+    state.muffinsLoading = true;
   },
 
-  "muffins/load_success": (state, action) => {
-    const { muffins } = action.payload;
-    return { ...state, muffinsLoading: false, muffins };
+  [loadMuffins.fulfilled]: (state, action) => {
+    state.muffinsLoading = false;
+    state.muffins = action.payload.muffins;
   },
 
-  "muffins/load_failure": (state, action) => {
-    const { error } = action;
-    return { ...state, muffinsLoading: false, error };
+  [loadMuffins.rejected]: (state) => {
+    state.muffinsLoading = false;
+    state.error = "Failed to load data";
   },
 });
 
