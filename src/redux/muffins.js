@@ -1,8 +1,7 @@
-import { createReducer } from "@reduxjs/toolkit";
+import { createReducer, createAction } from "@reduxjs/toolkit";
 
-export const likeMuffin = (muffinId) => ({
-  type: "muffins/like",
-  payload: { id: muffinId },
+export const likeMuffin = createAction("muffins/like", (muffinId) => {
+  return { payload: { id: muffinId } };
 });
 
 export const loadMuffins = () => async (dispatch) => {
@@ -42,17 +41,10 @@ const initialState = {
 
 const reducer = createReducer(initialState, {
   "muffins/like": (state, action) => {
-    const { id } = action.payload;
-
-    return {
-      ...state,
-      muffins: state.muffins.map((muffin) => {
-        if (muffin.id === id) {
-          return { ...muffin, likes: muffin.likes + 1 };
-        }
-        return muffin;
-      }),
-    };
+    const muffinToLike = state.muffins.find(
+      (muffin) => muffin.id === action.payload.id
+    );
+    muffinToLike.likes += 1;
   },
 
   "muffins/load_request": (state) => {
